@@ -2827,7 +2827,7 @@ void ProcessOneRequest(int forceClose, int socketId){
       "Ezooms/",
       "HTTrace",
       "AhrefsBot",
-      "MicroMessenger",
+      // "MicroMessenger", // Tencent Wechat use this user agent
       "OPPO A33 Build",
       "SemrushBot",
       "MegaIndex.ru",
