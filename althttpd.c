@@ -1624,6 +1624,47 @@ static int CheckBasicAuthorization(const char *zAuthFile){
 }
 
 /*
+** Check to see if there is a matching redirection line in zRedirFile.
+** Only exact matching is supported.  If a match is found, a redirect
+** will be issued immediately and false will be returned; otherwise,
+** true will be returned.
+**
+** File format:
+**
+**    *  Blank lines and lines that begin with '#' are ignored.
+**    *  Redirect lines must contain two fields, the first must
+**       be the path to match against for the redirect and the
+**       second must be the target location for the redirect and
+**       must be relative to the current website.
+*/
+static int CheckForRedirect(const char *zRedirFile){
+  FILE *in;
+  char zLine[2000];
+
+  in = fopen(zRedirFile, "rb");
+  if( in==0 ){
+    NotFound(155);  /* LOG: Cannot open -redirect file */
+    return 0;
+  }
+  while( fgets(zLine, sizeof(zLine), in) ){
+    char *zFrom;
+    char *zTo;
+
+    zFrom = GetFirstElement(zLine,&zTo);
+    if( zFrom==0 || *zFrom==0 ) continue;
+    if( zFrom[0]=='#' ) continue;
+    RemoveNewline(zTo);
+    if( strcmp(zFrom, zScript)==0 ){
+      Redirect(zTo, 302, 1, 420); /* LOG: follow entry in -redirect file */
+      fclose(in);
+      return 0;
+    }
+  }
+  fclose(in);
+  return 1;
+}
+
+/*
 ** Type for mapping file extensions to mimetypes and type-specific
 ** internal flags.
 */
@@ -2622,6 +2663,7 @@ void ProcessOneRequest(int forceClose, int socketId){
   FILE *hdrLog = 0;         /* Log file for complete header content */
 #endif
   char zLine[10000];        /* A buffer for input lines or forming names */
+  char zBuf[1000];          /* A buffer for error messages, etc */
   const MimeTypeDef *pMimeType = 0; /* URI's mimetype */
 
 
@@ -2639,7 +2681,6 @@ void ProcessOneRequest(int forceClose, int socketId){
   /* Change directories to the root of the HTTP filesystem
   */
   if( chdir(zRoot[0] ? zRoot : "/")!=0 ){
-    char zBuf[1000];
     Malfunction(190,   /* LOG: chdir() failed */
          "cannot chdir to [%s] from [%s]",
          zRoot, getcwd(zBuf,sizeof(zBuf)-1));
@@ -2994,10 +3035,18 @@ void ProcessOneRequest(int forceClose, int socketId){
   /* Change directories to the root of the HTTP filesystem
   */
   if( chdir(zHome)!=0 ){
-    char zBuf[1000];
     Malfunction(360,  /* LOG: chdir() failed */
          "cannot chdir to [%s] from [%s]",
          zHome, getcwd(zBuf,999));
+  }
+
+  /* Check to see if there is a redirection file.  If there is,
+  ** process it.
+  */
+  sprintf(zBuf, "%s/-redirect", zHome);
+  if( access(zBuf,R_OK)==0 && !CheckForRedirect(zBuf) ){
+    tls_close_conn();
+    return;
   }
 
   /* Locate the file in the filesystem.  We might have to append
@@ -3141,7 +3190,6 @@ void ProcessOneRequest(int forceClose, int socketId){
 
       /* Move into the directory holding the CGI program */
       if( chdir(zDir) ){
-        char zBuf[1000];
         Malfunction(445, /* LOG: chdir() failed */
              "CGI cannot chdir to [%s] from [%s]", 
              zDir, getcwd(zBuf,999));
@@ -3674,6 +3722,7 @@ INSERT INTO xref VALUES(133,'SIGXCPU');
 INSERT INTO xref VALUES(139,'Unknown signal');
 INSERT INTO xref VALUES(140,'CGI script is writable');
 INSERT INTO xref VALUES(150,'Cannot open -auth file');
+INSERT INTO xref VALUES(155,'Cannot open -redirect file');
 INSERT INTO xref VALUES(160,' http request on https-only page');
 INSERT INTO xref VALUES(170,'-auth redirect');
 INSERT INTO xref VALUES(180,' malformed entry in -auth file');
@@ -3700,6 +3749,7 @@ INSERT INTO xref VALUES(380,'URI not found');
 INSERT INTO xref VALUES(390,'File not readable');
 INSERT INTO xref VALUES(400,'URI is a directory w/o index.html');
 INSERT INTO xref VALUES(410,'redirect to add trailing /');
+INSERT INTO xref VALUES(420,'follow entry in -redirect file');
 INSERT INTO xref VALUES(440,'pipe() failed');
 INSERT INTO xref VALUES(441,'pipe() failed');
 INSERT INTO xref VALUES(442,'dup() failed');

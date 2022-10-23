@@ -1,9 +1,9 @@
-C Add\sthe\sCOOP\sand\sCOEP\sHTTP\sreply\sheaders\sif\sthe\s--enable-sab\scommand-line\noption\sis\sused.\s\s"sab"\sstands\sfor\s"SharedArrayBuffer".
-D 2022-09-26T16:57:19.049
+C Corrections\sto\sget\sthings\sworking\sand\stested.
+D 2022-10-23T00:16:49.881
 F .editorconfig 950381e0f72321e4695a00259998d6a145e1c161d2b09646d1df692ac9e05fe8
 F .fossil-settings/manifest 4598ba9e1e19cdadf19aa4881b2cb5a74fe4813ceea9bfe7e2fe382904cd14fe
 F Makefile 1b1f232befcc94348ffa0b95887b1b5fe17babaff4bb0183d115f2db626dc232
-F althttpd.c c66da00efd620804d6d4142c1022649174a22d648f2dae2736bff62bd1665084
+F althttpd.c 3d6fab86f8b71cc21def42822aaa3227a59588ee4159c177fdc2178c4ee0d622
 F althttpd.md 93b17cb7cceaee94cbb0d06630c804a1c5276f2049f0f57ae9846a533af74960
 F contrib/dir-browser-2/index 1c7709d5e2af59a8369957abe1c392bc70b8b3ae1849f8e81e3a01f9cd875816 x
 F contrib/dir-browser-2/index.md 4879293e7e2f54dbd1b1a02f98e458d6de831b48e2db953bc2b7e35997f62437
@@ -15,8 +15,7 @@ F contrib/docker/build-static-althttpd.sh 31b98a4fbbbe6d53f7cfdf13cc3748f3caf27a
 F contrib/docker/index.md bce5d8d5db80ed53fe224274f17563107c8ab419e464ff8088de361483bf4bc7
 F extract-error-numbers.tcl 748f9a0b69aac31a019926116cc1b4d716804e3dd2d97fcded83a3f6cb9bdd6d
 F static-ssl.mk a4e6a6358af92ca3ff26223016e355d8d1615b30d20f68e8b8111f9d23fd6f7c
-P 0310001ae1a7ec7601ecdf761a568e96ca9b12437e74c7edc66ab07296f0bdf0 3496e47091c8565accace9a0a6a2eaa0ed8df65a2b36b10556a0852fa02346c4
-R 33be4c8a218d06e75618d8e8c0270419
-T +closed 3496e47091c8565accace9a0a6a2eaa0ed8df65a2b36b10556a0852fa02346c4
-U drh
-Z c2f01626137322853869244b93f4cb7e
+P 7a0cf0d59f87934f2c93de10aeaa82c8a3a009a9090b4dfa337ddfcdaf6f8986
+R a16f12967e1ca1fc3ac070169be9df51
+U mistachkin
+Z 3191cdd507cc557e5f937a7ff3585307
